@@ -1,6 +1,6 @@
 let contacts = JSON.parse(localStorage.getItem("contacts")) || [];
 
-// ===== INIT =====
+
 detectList();
 
 // ===== ELEMENTS =====
@@ -31,7 +31,7 @@ buttonClear.addEventListener("click", () => {
     detectList();
 });
 
-// ===== LOGIC =====
+
 function addContact(name, job, number) {
     if (!detectName(name) || !detectJob(job)) return;
 
@@ -50,7 +50,7 @@ function deletContact(id) {
     contacts = contacts.filter(c => c.id !== id);
 }
 
-// ===== VALIDATION =====
+
 function detectName(name) {
     if (/\d/g.test(name)) {
         console.log("в имени не может быть чисел");
@@ -83,7 +83,7 @@ function detectJob(job) {
     return true;
 }
 
-// ===== RENDER =====
+
 function detectList(list = contacts) {
     const container = document.getElementById("contacts");
     container.innerHTML = "";
@@ -95,7 +95,7 @@ function detectList(list = contacts) {
     });
 }
 
-// ===== STORAGE =====
+
 function saveCash() {
     localStorage.setItem("contacts", JSON.stringify(contacts));
 }
