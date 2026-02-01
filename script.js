@@ -1,5 +1,8 @@
 let contacts = JSON.parse(localStorage.getItem("contacts")) || [];
+const lettersStr = "abcdefghijklmnopqrstuvwxyz";
+for (let i = 0; i < lettersStr.length; i++) {
 
+}
 
 detectList();
 
@@ -15,7 +18,9 @@ buttonAdd.addEventListener("click", () => {
     let number = document.getElementById("number").value;
 
     addContact(name, job, number);
+    groupOfArr(contacts);
     detectList();
+    
 });
 
 buttonDel.addEventListener("click", () => {
@@ -93,9 +98,26 @@ function detectList(list = contacts) {
         div.textContent = `${c.name} — ${c.job} — ${c.number}`;
         container.appendChild(div);
     });
-}
+};
 
 
 function saveCash() {
     localStorage.setItem("contacts", JSON.stringify(contacts));
-}
+};
+function groupOfArr(contacts) {
+    const letters = {};
+    makeObjLett (letters, lettersStr)
+    contacts.forEach(contact => {
+        let firstLetter = contact.name[0].toLowerCase();
+        if (letters[firstLetter]) {
+            letters[firstLetter].push(contact)
+        }
+    })
+    console.log(letters)
+    return letters
+};
+function makeObjLett (letters, lettersStr) {
+    for (const letter of lettersStr) {
+        letters[letter] = [];
+    }
+};
