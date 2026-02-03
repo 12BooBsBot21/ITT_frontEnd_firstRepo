@@ -1,0 +1,77 @@
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background-color: #f3f3f3;
+}
+
+#form input {
+    margin: 5px;
+    padding: 5px;
+    width: 120px;
+}
+
+#form button {
+    margin: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    border: none;
+    background-color: #4caf50;
+    color: white;
+}
+
+#form button:hover {
+    background-color: #45a049;
+}
+
+/* Сетка для букв */
+#lettersHTML {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 20px;
+}
+
+.letter-block {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 5px;
+    width: 50px;       /* уменьшили кнопки */
+    text-align: center;
+    cursor: pointer;
+    background-color: #e0f0ff;
+    transition: background-color 0.2s;
+}
+
+.letter-block:hover {
+    background-color: #b0d4ff;
+}
+
+.contacts-container {
+    margin-top: 5px;
+    display: none; /* скрываем по умолчанию */
+}
+
+.contact-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2px;
+    padding: 2px 5px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.contact-item button {
+    background-color: #ff6b6b;
+    border: none;
+    color: #fff;
+    padding: 2px 5px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 10px;
+}
+
+.contact-item button:hover {
+    background-color: #ff3b3b;
+}
