@@ -1,26 +1,34 @@
 <html lang="ru">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Contacts App</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-<h1>Contacts App</h1>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contacts App</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>Contacts App</h1>
 
-<div id="form">
-    <input type="text" id="name" placeholder="Имя">
-    <input type="text" id="job" placeholder="Профессия">
-    <input type="text" id="number" placeholder="Телефон">
-    <button id="buttonAdd">Добавить контакт</button>
-    <button id="buttonClear">Очистить все контакты</button>
-    <button id="buttonSearch">Найти</button>
-</div>
+    <!-- Для формы лучше использовать семантический тег `form` -->
+    <div id="form">
+      <!-- Не хватает label'ов для input'ов. -->
+      <input type="text" id="name" placeholder="Имя" />
+      <input type="text" id="job" placeholder="Профессия" />
+      <!-- Для телефона лучше использовать type="tel". -->
+      <input type="text" id="number" placeholder="Телефон" />
+      <!-- Кнопки находятся вне `<form>`, поэтому не используют стандартное поведение submit.   -->
+      <!-- При использовании `<form>` можно было бы упростить JS. -->
+      <button id="buttonAdd">Добавить контакт</button>
+      <button id="buttonClear">Очистить все контакты</button>
+      <button id="buttonSearch">Найти</button>
+    </div>
 
-<div id="lettersHTML"></div>
+    <!-- Лучше было бы contactsByLetter. -->
+    <div id="lettersHTML"></div>
 
-<div id="contacts"></div>
+    <!-- Он где-то используется вообще? -->
+    <div id="contacts"></div>
 
-<script src="script.js"></script>
-</body>
+    <!-- Дополнительно можно использовать `defer` при переносе в `<head>` -->
+    <script src="script.js"></script>
+  </body>
 </html>
