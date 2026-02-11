@@ -1,14 +1,16 @@
 let contacts = JSON.parse(localStorage.getItem("contacts")) || [];
 const lettersStr = "abcdefghijklmnopqrstuvwxyz";
 
-let buttonSearch = document.getElementById("buttonSearch");
-let buttonAdd = document.getElementById("buttonAdd");
-let buttonClear = document.getElementById("buttonClear");
-let lettersHtml = document.getElementById("lettersHTML");
+const form = document.getElementById("form"); // добавил форм, и удалил buttonAdd
+const buttonSearch = document.getElementById("buttonSearch");
+const buttonClear = document.getElementById("buttonClear");
+const contactsByLetter = document.getElementById("contactsByLetter"); // меняем и это как в HTML
 
 buttonSearch.addEventListener("click", pageSearching);
 
-buttonAdd.addEventListener("click", () => {
+form.addEventListener("submit", e => { //поменял прослушку с кнопки на form
+    e.preventDefault();
+
     let name = document.getElementById("name").value;
     let job = document.getElementById("job").value;
     let number = document.getElementById("number").value;
@@ -73,7 +75,7 @@ function groupOfArr() {
     return letters;
 };
 function letterHTML() {
-    lettersHtml.innerHTML = "";
+    contactsByLetter.innerHTML = ""; //
     const grouped = groupOfArr();
 
     Object.entries(grouped).forEach(([letter, arr]) => {
@@ -106,8 +108,8 @@ function letterHTML() {
             });
         });
 
-        lettersHtml.appendChild(letterBlock);
-        lettersHtml.appendChild(contactsContainer);
+        contactsByLetter.appendChild(letterBlock); //
+        contactsByLetter.appendChild(contactsContainer); // 
     });
 };
 function searchContact(word) {

@@ -3,24 +3,30 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Contacts App</title>
+<script src="script.js" defer></script> <!--script с defer-->
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <h1>Contacts App</h1>
 
-<div id="form">
+<form id="form"> <!-- изменил на форм, изменил js строки: 4, 11 -->
+    <label for="name">Имя</label> <!--add label-->
     <input type="text" id="name" placeholder="Имя">
+
+    <label for="job">Профессия</label> <!--add label-->
     <input type="text" id="job" placeholder="Профессия">
-    <input type="text" id="number" placeholder="Телефон">
-    <button id="buttonAdd">Добавить контакт</button>
+
+    <label for="number">Телефон</label> <!--add label-->
+    <input type="tel" id="number" placeholder="Телефон"> <!--type tel-->
+    <button type="submit" id="buttonAdd">Добавить контакт</button> <!--добавил тайп что переделать обработку клика-->
     <button id="buttonClear">Очистить все контакты</button>
     <button id="buttonSearch">Найти</button>
-</div>
+</form>
 
-<div id="lettersHTML"></div>
+<div id="contactsByLetter"></div> <!--изменил название, изменил js строки: 7, 78, 111, 112-->
 
-<div id="contacts"></div>
+<!--удалил див contacts, хз зачем я его делал-->
 
-<script src="script.js"></script>
+
 </body>
 </html>
