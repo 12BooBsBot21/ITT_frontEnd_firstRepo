@@ -1,10 +1,12 @@
-let contacts = JSON.parse(localStorage.getItem("contacts")) || [];
+const state = { 
+    contacts : JSON.parse(localStorage.getItem("contacts")) || [],
+}; // ввел state, перевел все функции на него вместо contacts
 const lettersStr = "abcdefghijklmnopqrstuvwxyz";
 
 const form = document.getElementById("form"); // добавил форм, и удалил buttonAdd
 const buttonSearch = document.getElementById("buttonSearch");
 const buttonClear = document.getElementById("buttonClear");
-const contactsByLetter = document.getElementById("contactsByLetter"); // меняем и это как в HTML
+const contactsByLetter = document.getElementById("contactsByLetter"); // меняем и это как в HTML`=
 
 buttonSearch.addEventListener("click", pageSearching);
 
@@ -16,30 +18,27 @@ form.addEventListener("submit", e => { //поменял прослушку с к
     let number = document.getElementById("number").value;
 
     addContact(name, job, number);
-    letterHTML();
 });
 
 buttonClear.addEventListener("click", () => {
-    contacts = [];
-    localStorage.removeItem("contacts");
-    letterHTML();
+    updateContacts([]);
 });
 
 function addContact(name, job, number) {
     if (!detectName(name) || !detectJob(job) || !detectNumber(number)) return;
 
-    contacts.push({ id: Date.now(), name, job, number });
-    saveCash();
+    const newContacts = { id: Date.now(), name, job, number };
+    updateContacts([...state.contacts, newContacts]);
 };
 
-function deletContact(id) {
-    contacts = contacts.filter(c => c.id !== id);
-    saveCash();
+function deliteContact(id) { ///
+    updateContacts(state.contacts.filter(c => c.id !== id));
+    
 };
 
 function detectName(name) {
     if (/\d/g.test(name) || name.replace(/[^a-zа-яё]/gi, "").length < 3) {
-        alert("Неверное имя");
+        setError("name", "неверное имя") ///
         return false;
     }
     return true;
@@ -47,7 +46,7 @@ function detectName(name) {
 
 function detectJob(job) {
     if (/\d/g.test(job) || job.replace(/[^a-zа-яё]/gi, "").length < 3) {
-        console.log("Неверная профессия");
+        setError("job", "неверное професия") ///
         return false;
     }
     return true;
@@ -55,26 +54,32 @@ function detectJob(job) {
 
 function detectNumber(number) {
     if (!Number(number) || number.length < 5) {
-        console.log("Неверный номер");
+        setError("number", "неверное номер ") ///
         return false;
     }
     return true;
 };
+function setError (input, message) {   // вывод ошибок не в консоль, не в алерт а красным текстом под инпут 
+      const errorBlock = document.getElementById(`error-${input}`);
+  errorBlock.textContent = message || "";
+    if (message) {
+    setTimeout(() => {
+      errorBlock.textContent = "";
+    }, 3000);
+  }
+}
 
-function saveCash() {
-    localStorage.setItem("contacts", JSON.stringify(contacts));
-};
 function groupOfArr() {
     const letters = {};
     for (const l of lettersStr) letters[l] = [];
 
-    contacts.forEach(c => {
+    state.contacts.forEach(c => {
         let firstLetter = c.name[0].toLowerCase();
         if (letters[firstLetter]) letters[firstLetter].push(c);
     });
     return letters;
 };
-function letterHTML() {
+function render() {  // перешел с letterHTML на нормальное название render
     contactsByLetter.innerHTML = ""; //
     const grouped = groupOfArr();
 
@@ -100,7 +105,7 @@ function letterHTML() {
                 deleteBtn.textContent = "Del";
                 deleteBtn.addEventListener("click", () => {
                     deletContact(c.id);
-                    letterHTML();
+                    render();
                 });
 
                 contactDiv.appendChild(deleteBtn);
@@ -114,7 +119,7 @@ function letterHTML() {
 };
 function searchContact(word) {
     const a = word.toLowerCase().trim();
-    return contacts.filter(contact => {
+    return state.contacts.filter(contact => {
          return contact.name.toLowerCase().includes(a)
     });
 };
@@ -134,7 +139,7 @@ function pageSearching() {
     input.placeholder = "введите имя";
     
     const btn = document.createElement("button");
-    btn.placeholder = "найти";
+    btn.textContent = "найти";
 
     const resultDiv = document.createElement("div");
 
@@ -160,7 +165,7 @@ function renderResult(value, box) {
 
         delBtn.onclick = () => {
             deletContact(contact.id);
-            letterHTML(); 
+            render(); 
             div.remove(); 
         };
 
@@ -168,5 +173,12 @@ function renderResult(value, box) {
         box.appendChild(div); 
     });
 }
-
-letterHTML();
+function updateContacts(newContacts) { // по поводу размазанных данных, во избежание этого решил сгруппировать все в одну фунцию
+    state.contacts = newContacts;
+    saveCash();
+    render();
+}
+function saveCash() {
+    localStorage.setItem("contacts", JSON.stringify(state.contacts));
+};
+render();

@@ -12,15 +12,20 @@
 <form id="form"> <!-- изменил на форм, изменил js строки: 4, 11 -->
     <label for="name">Имя</label> <!--add label-->
     <input type="text" id="name" placeholder="Имя">
+    <div class="error" id="error-name"></div>
 
     <label for="job">Профессия</label> <!--add label-->
     <input type="text" id="job" placeholder="Профессия">
+    <div class="error" id="error-job"></div>
 
     <label for="number">Телефон</label> <!--add label-->
     <input type="tel" id="number" placeholder="Телефон"> <!--type tel-->
+    <div class="error" id="error-number"></div>
+
     <button type="submit" id="buttonAdd">Добавить контакт</button> <!--добавил тайп что переделать обработку клика-->
-    <button id="buttonClear">Очистить все контакты</button>
-    <button id="buttonSearch">Найти</button>
+    <button type="button" id="buttonClear">Очистить все контакты</button>
+    <!-- в оставшихся кнопках добавил тип, баг страницы пропал -->
+    <button type="button" id="buttonSearch">Найти</button>
 </form>
 
 <div id="contactsByLetter"></div> <!--изменил название, изменил js строки: 7, 78, 111, 112-->
