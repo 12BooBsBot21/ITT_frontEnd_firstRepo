@@ -1,6 +1,9 @@
 const state = { 
-    contacts : JSON.parse(localStorage.getItem("contacts")) || [],
-}; // ввел state, перевел все функции на него вместо contacts
+    contacts : JSON.parse(localStorage.getItem("contacts")) || [], // ввел state, перевел все функции на него вместо contacts
+    openLetter : null, // state букв для разделения UI от остального 
+    isSearchOpen : false, //state на поиск 
+    searchQuery : "", // результат поиска для обнавления списка в поиске
+}; 
 const lettersStr = "abcdefghijklmnopqrstuvwxyz";
 
 const form = document.getElementById("form"); // добавил форм, и удалил buttonAdd
@@ -8,15 +11,13 @@ const buttonSearch = document.getElementById("buttonSearch");
 const buttonClear = document.getElementById("buttonClear");
 const contactsByLetter = document.getElementById("contactsByLetter"); // меняем и это как в HTML`=
 
-buttonSearch.addEventListener("click", pageSearching);
+buttonSearch.addEventListener("click", toggleSearch);
 
 form.addEventListener("submit", e => { //поменял прослушку с кнопки на form
     e.preventDefault();
-
     let name = document.getElementById("name").value;
     let job = document.getElementById("job").value;
     let number = document.getElementById("number").value;
-
     addContact(name, job, number);
 });
 
@@ -31,9 +32,8 @@ function addContact(name, job, number) {
     updateContacts([...state.contacts, newContacts]);
 };
 
-function deliteContact(id) { ///
+function deleteContact(id) { ///
     updateContacts(state.contacts.filter(c => c.id !== id));
-    
 };
 
 function detectName(name) {
@@ -69,63 +69,130 @@ function setError (input, message) {   // вывод ошибок не в кон
   }
 }
 
-function groupOfArr() {
+function groupContactsByLetter () {
     const letters = {};
     for (const l of lettersStr) letters[l] = [];
 
     state.contacts.forEach(c => {
+        if (!c.name || typeof c.name !== "string") return; // проверка для избегания багов + early return 
         let firstLetter = c.name[0].toLowerCase();
         if (letters[firstLetter]) letters[firstLetter].push(c);
     });
     return letters;
 };
-function render() {  // перешел с letterHTML на нормальное название render
-    contactsByLetter.innerHTML = ""; //
-    const grouped = groupOfArr();
 
-    Object.entries(grouped).forEach(([letter, arr]) => {
-        const letterBlock = document.createElement("div");
-        letterBlock.className = "letter-block";
-        letterBlock.textContent = letter.toUpperCase() + " (" + arr.length + ")";
 
-        const contactsContainer = document.createElement("div");
-        contactsContainer.className = "contacts-container";
+function render() {
+    renderAlphabet();
+    manageSearchModal();
+}
 
-        letterBlock.addEventListener("click", () => {
-            contactsContainer.style.display =
-                contactsContainer.style.display === "block" ? "none" : "block";
-            contactsContainer.innerHTML = "";
 
-            arr.forEach(c => {
-                const contactDiv = document.createElement("div");
-                contactDiv.className = "contact-item";
-                contactDiv.textContent = `${c.name} — ${c.job} — ${c.number}`;
+function renderAlphabet() { // отделил алфавит от рендера всего 
+      contactsByLetter.innerHTML = "";
 
-                const deleteBtn = document.createElement("button");
-                deleteBtn.textContent = "Del";
-                deleteBtn.addEventListener("click", () => {
-                    deletContact(c.id);
-                    render();
-                });
+  const grouped = groupContactsByLetter();
 
-                contactDiv.appendChild(deleteBtn);
-                contactsContainer.appendChild(contactDiv);
-            });
-        });
+  Object.entries(grouped).forEach(([letter, arr]) => {
 
-        contactsByLetter.appendChild(letterBlock); //
-        contactsByLetter.appendChild(contactsContainer); // 
+    const letterBlock = document.createElement("div");
+    letterBlock.className = "letter-block";
+    letterBlock.textContent = letter.toUpperCase() + " (" + arr.length + ")";
+
+    const contactsContainer = document.createElement("div");
+    contactsContainer.className = "contacts-container";
+
+    const isOpen = state.openLetter === letter;
+    contactsContainer.style.display = isOpen ? "block" : "none";
+
+    
+    letterBlock.addEventListener("click", () => {
+      state.openLetter =
+        state.openLetter === letter ? null : letter;
+
+      render();
     });
-};
+
+    
+    if (isOpen) {
+        renderContacstList(arr, contactsContainer)
+    }
+
+    contactsByLetter.appendChild(letterBlock);
+    contactsByLetter.appendChild(contactsContainer);
+
+  });
+}
+
+
+function renderContacstList (contactsArr, container) { //функция, наполняет див буквы контактами 
+    container.innerHTML = "";
+
+    contactsArr.forEach(contact => {
+         const contactDiv = document.createElement("div");
+        contactDiv.className = "contact-item";
+
+        contactDiv.textContent =
+          `имя:${contact.name} — професия:${contact.job} — телефон:${contact.number}`;
+
+        
+        const deleteBtn = document.createElement("button");
+        deleteBtn.textContent = "Delete";
+
+        deleteBtn.addEventListener("click", (e) => {
+          e.stopPropagation(); 
+          deleteContact(contact.id);
+        });
+        contactDiv.appendChild(deleteBtn);
+        container.appendChild(contactDiv);
+    })
+}
+
+
+
+
+
+
+
+
+
+// поиск логика 
 function searchContact(word) {
+    if(!word || word.trim() === "" ) return [];
     const a = word.toLowerCase().trim();
     return state.contacts.filter(contact => {
          return contact.name.toLowerCase().includes(a)
     });
 };
-function pageSearching() {
-    const overplay = document.createElement("div")
-    overplay.className = "search-overplay";
+
+function manageSearchModal() { // rjynhjkm ВЩЬ 
+        const existingOverlay = document.querySelector(".search-overplay");
+
+    if (state.isSearchOpen) {
+        if (!existingOverlay) createSearchModal();
+
+        const resultDiv = document.getElementById("searchResultBox");
+        if(resultDiv) {
+            const filtred = searchContact(state.searchQuery);
+            renderContacstList(filtred, resultDiv);
+        }
+    } else {
+        existingOverlay?.remove();  
+    }
+};
+
+
+function toggleSearch() { // переключатель стейта 
+    state.isSearchOpen = !state.isSearchOpen;
+
+    if(!state.isSearchOpen) {
+        state.searchQuery = ""
+    };
+    render()
+};
+function createSearchModal() {
+    const overlay = document.createElement("div")
+    overlay.className = "search-overplay";
 
     const modal = document.createElement("div");
     modal.className = "search-modal";
@@ -133,26 +200,31 @@ function pageSearching() {
     const closeBtn = document.createElement("span");
     closeBtn.textContent = "✖";
     closeBtn.className = "close-btn";
-    closeBtn.onclick = () => overplay.remove();
+
+    closeBtn.onclick = toggleSearch; ///
 
     const input = document.createElement("input");
     input.placeholder = "введите имя";
+    input.value = state.searchQuery;
     
     const btn = document.createElement("button");
     btn.textContent = "найти";
 
     const resultDiv = document.createElement("div");
+    resultDiv.id = "searchResultBox";
 
     btn.onclick = () => {
-        const result = searchContact(input.value);
-        renderResult(result, resultDiv)
+        state.searchQuery = input.value;
+        render();
     };
 
     modal.append(closeBtn, input, btn, resultDiv);
-    overplay.appendChild(modal);
-    document.body.appendChild(overplay);
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
 }; 
-function renderResult(value, box) {
+
+
+function renderResultOfSearching(value, box) { // рендер результатов поиска
     box.innerHTML = ""; 
 
     value.forEach(contact => {
@@ -164,9 +236,8 @@ function renderResult(value, box) {
         delBtn.textContent = "Delete";
 
         delBtn.onclick = () => {
-            deletContact(contact.id);
+            deleteContact(contact.id);
             render(); 
-            div.remove(); 
         };
 
         div.appendChild(delBtn);
