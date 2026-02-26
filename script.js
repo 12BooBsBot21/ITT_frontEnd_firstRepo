@@ -148,7 +148,7 @@ function renderContacstList (contactsArr, container) { //функция, нап�
     })
 }
 
-
+console.log(true == "5")
 
 
 
